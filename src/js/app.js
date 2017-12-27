@@ -54,11 +54,13 @@ function clearFromDOM(el) {
 
 function insertResults(resultObj) {
 
-  const resultContainer = querySel('.actors-result-wrap');
+  const resultContainer = querySel('.actors-result-wrap'),
+        resultInstructions = querySel('.result-instructions');
 
   clearFromDOM(resultContainer);
 
   if (resultObj.length === 0) resultContainer.textContent = 'Sorry, nothing found.';
+  resultInstructions.textContent = `Click the actors'/actress' photo for their complete works.`;
 
   resultObj.forEach((result) => {
      let resultEl = document.createElement('a'),
@@ -112,7 +114,8 @@ function getActorCredits(actorId) {
         creditMetaEl = querySel('.credit-meta'),
         creditName = querySel('.credit-about'),
         creditCharactor = querySel('.credit-character'),
-        creditOverview = querySel('.credit-overview');
+        creditOverview = querySel('.credit-overview'),
+        creditInstructions = querySel('.credit-instructions');
 
   xhr.onload = function() {
     if (xhr.status === 200) {
@@ -122,6 +125,7 @@ function getActorCredits(actorId) {
       clearFromDOM(creditsEl);
 
       creditMetaEl.textContent = `Has been in ${creditRes.cast.length} movies and / or TV shows.`;
+      creditInstructions.textContent = `Click a poster to get more info about their role.`;
 
       creditRes.cast.forEach((credit) => {
             let creditEl = document.createElement('a'),
