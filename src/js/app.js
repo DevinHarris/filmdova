@@ -26,7 +26,7 @@ let btn = querySel('.btn'),
 // then take to actor page
 
 
-function removeFromDOM(el) {
+function clearFromDOM(el) {
 
   if (el.firstChild) {
      while(el.firstChild) {
@@ -39,7 +39,9 @@ function insertResults(resultObj) {
 
   const resultContainer = querySel('.actors-result-wrap');
 
-  removeFromDOM(resultContainer);
+  clearFromDOM(resultContainer);
+
+  if (resultObj.length === 0) resultContainer.textContent = 'Sorry, nothing found.';
 
   resultObj.forEach((result) => {
      let resultEl = document.createElement('a'),
@@ -59,17 +61,22 @@ function insertResults(resultObj) {
 
 function getActorInfo(actorId) {
   const xhr = new XMLHttpRequest(),
-     actorNameEl = querySel('.actor-name'),
+      actorNameEl = querySel('.actor-name'),
       actorMetaEl = querySel('.actor-meta'),
       actorBioEl = querySel('.actor-bio');
+
 
 
   xhr.onload = function() {
     if (xhr.status === 200) {
       const actorInfo = JSON.parse(xhr.response);
+
+
+      //clearFromDOM(querySel('.actor-info'));
       
       actorNameEl.textContent = `${actorInfo.name} - ${actorInfo.birthday} - ${actorInfo.place_of_birth}`;
       actorBioEl.textContent = `${actorInfo.biography}`;
+
 
       console.log(actorInfo);
 
@@ -79,6 +86,46 @@ function getActorInfo(actorId) {
   }
 
   xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}?api_key=71c13c22fd835d4e19e38ff24d5ab4fc&language=en-US`);
+  xhr.send();
+}
+
+function getActorCredits(actorId) {
+  const xhr = new XMLHttpRequest(),
+        creditsEl = querySel('.credits-wrap'),
+        creditMetaEl = querySel('.credit-meta');
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      const creditRes = JSON.parse(xhr.response);
+
+      clearFromDOM(creditsEl);
+
+      creditMetaEl.textContent = `Has been in ${creditRes.cast.length} movies and / or TV shows.`;
+
+      creditRes.cast.forEach((credit) => {
+            let creditEl = document.createElement('a'),
+                creditImg = document.createElement('img');
+          
+          // checking if a profile image exist, if not it's ignored
+          if (credit.poster_path) creditImg.src = `https://image.tmdb.org/t/p/w185/${credit.poster_path}`;
+          creditImg.classList.add('credit-poster');
+          creditEl.setAttribute('href', "#");
+          creditEl.setAttribute('data-credit-id', credit.id);
+
+          creditEl.appendChild(creditImg);
+          creditsEl.appendChild(creditEl);
+        });
+
+      console.log(JSON.parse(xhr.response));
+      
+
+    } else {
+      console.log(`There was an error ${xhr.status}`);
+    }
+  }
+
+  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}/combined_credits?api_key=71c13c22fd835d4e19e38ff24d5ab4fc&language=en-US`)
+
   xhr.send();
 }
 
@@ -119,6 +166,7 @@ search.addEventListener('submit', function (e) {
         result.addEventListener('click', (e) => {
           e.preventDefault();
           getActorInfo(result.getAttribute('data-actor-id'));
+          getActorCredits(result.getAttribute('data-actor-id'));
         })
       })
 
