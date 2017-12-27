@@ -1,0 +1,32 @@
+header {
+	padding: 30px 0 0 0;
+
+	.header-inner {
+		align-items: baseline;
+	    background: inherit;
+		display: flex;
+		height: 70px;
+	    justify-content: space-around;
+	    width: 700px;
+
+	    .logo {
+	    	color: #fff;
+	    	text-decoration: none;
+
+	    	h1 {
+	    		.highlight {
+					color: #f57777
+	    		}
+
+	    		font-size: 1.5em;
+	    		font-weight: 600;
+	    	}
+	    }
+
+	    .search {
+	    	background: none;
+	    	border: none;
+	    	width: 400px;
+	    }
+	}
+}

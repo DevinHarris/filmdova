@@ -1,0 +1,39 @@
+.app {
+	margin-top: 100px;
+
+	.welcome-msg {
+		h2 {
+
+			font-size: 3.5rem;
+			text-align: center;
+		}
+	}
+
+	.app-wrap {
+		.actor-info {
+			
+			.actor-meta {
+				span {
+					font-size: 0.5em;
+				    margin-left: 40px;
+				}
+			}
+
+			.known-for {
+				display: flex;
+			    justify-content: space-between;
+			    overflow-x: scroll;
+			    width: 900px;
+			    
+				.poster {
+					height: 250px;
+				}
+			}
+		}
+	}
+
+	.actor-poster {
+		height: 300px;
+		margin: 0 30px 30px 0;
+	}
+}
