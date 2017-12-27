@@ -25,6 +25,23 @@ let btn = querySel('.btn'),
 
 // then take to actor page
 
+function callToTMDB(url) {
+  const api_key = '71c13c22fd835d4e19e38ff24d5ab4fc';
+
+  const xhr = new XMLHttpRequest();
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      return JSON.parse(xhr.response);
+    } else {
+      console.log(`There was an error ${xhr.status}`);
+    }
+  }
+
+  xhr.open('GET', `${url}/${api_key}`);
+  xhr.send();
+}
+
 
 function clearFromDOM(el) {
 
@@ -74,7 +91,7 @@ function getActorInfo(actorId) {
 
       //clearFromDOM(querySel('.actor-info'));
       
-      actorNameEl.textContent = `${actorInfo.name} - ${actorInfo.birthday} - ${actorInfo.place_of_birth}`;
+      actorNameEl.textContent = `${actorInfo.name}, ${actorInfo.birthday}, ${actorInfo.place_of_birth}`;
       actorBioEl.textContent = `${actorInfo.biography}`;
 
 
@@ -92,11 +109,15 @@ function getActorInfo(actorId) {
 function getActorCredits(actorId) {
   const xhr = new XMLHttpRequest(),
         creditsEl = querySel('.credits-wrap'),
-        creditMetaEl = querySel('.credit-meta');
+        creditMetaEl = querySel('.credit-meta'),
+        creditName = querySel('.credit-about'),
+        creditCharactor = querySel('.credit-character'),
+        creditOverview = querySel('.credit-overview');
 
   xhr.onload = function() {
     if (xhr.status === 200) {
-      const creditRes = JSON.parse(xhr.response);
+      const creditRes = JSON.parse(xhr.response),
+            showID = '';
 
       clearFromDOM(creditsEl);
 
@@ -109,14 +130,36 @@ function getActorCredits(actorId) {
           // checking if a profile image exist, if not it's ignored
           if (credit.poster_path) creditImg.src = `https://image.tmdb.org/t/p/w185/${credit.poster_path}`;
           creditImg.classList.add('credit-poster');
+          creditEl.classList.add('credit');
           creditEl.setAttribute('href', "#");
           creditEl.setAttribute('data-credit-id', credit.id);
 
           creditEl.appendChild(creditImg);
           creditsEl.appendChild(creditEl);
-        });
+      });
 
-      console.log(JSON.parse(xhr.response));
+      const creditDomEl = document.querySelectorAll('.credit');
+
+      creditDomEl.forEach((credit) => {
+        credit.addEventListener('click', function(e) {
+          const showID = this.getAttribute('data-credit-id');
+          e.preventDefault();
+          
+          creditRes.cast.forEach((show) => {
+              if (String(show.id) === showID) {
+                  creditName.textContent = `${show.title}`;
+                  creditCharactor.textContent = `${show.character}`;
+                  creditOverview.textContent = `${show.overview}`;
+
+              }
+          })
+
+          console.log(`Credit ID: ${showID}`);
+        })
+      })
+      
+
+      console.log(creditRes);
       
 
     } else {
@@ -150,15 +193,12 @@ search.addEventListener('submit', function (e) {
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (xhr.status === 200) {
-      const TMDB_Results = JSON.parse(xhr.response),
-            TMDB_Results_Cache = TMDB_Results;
+      const TMDB_Results = JSON.parse(xhr.response);
 
       appWrap.style.display = 'block';
       welcomeMsg.style.display = 'none';
 
       insertResults(TMDB_Results.results);
-
-      console.log(actorResults);
 
        const fullResultEl = document.querySelectorAll('.actor-result');
 
@@ -170,31 +210,6 @@ search.addEventListener('submit', function (e) {
         })
       })
 
-
-      /*actorResults.forEach((result) => {
-        result.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('clicked');
-        })
-      }); */
-
-
-
-     /*     posterBaseURL = 'https://image.tmdb.org/t/p/original/';
-      actorNameEl.textContent = TMDB_Results.results[0].name;
-      actorPosterEl.src = `${posterBaseURL + TMDB_Results.results[0].profile_path}`;
-
-      TMDB_Results.results[0].known_for.map((credit) => {
-        // remove previous imgs from dom
-
-        let imgEl = document.createElement('img');
-           
-        
-        imgEl.src =  `${posterBaseURL + credit.poster_path}`;
-
-        imgEl.classList.add('poster');
-        knownFor.appendChild(imgEl);
-      }) */
       console.log(TMDB_Results.results);
 
     }
