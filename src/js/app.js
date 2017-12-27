@@ -15,13 +15,8 @@ const querySel = (elName) => {
 let btn = querySel('.btn'),
     search = querySel('.search-form'),
     searchEl = querySel('.search'),
-    actorPosterEl = querySel('.actor-poster'),
-    actorNameEl = querySel('.actor-name'),
-    actorMetaEl = querySel('.actor-meta'),
-    actorBioEl = querySel('.actor-bio'),
-    knownFor = querySel('.known-for'),
-    actorId = '',
-    actorResults = document.querySelectorAll('.actor-result'),
+    appWrap = querySel('.app-wrap'),
+    welcomeMsg = querySel('.welcome-msg'),
     posterBaseURL = 'https://image.tmdb.org/t/p/original/';
 
 // send Person search request - function
@@ -49,22 +44,53 @@ function insertResults(resultObj) {
   resultObj.forEach((result) => {
      let resultEl = document.createElement('a'),
       resultImg = document.createElement('img');
-
-      resultImg.src = `${posterBaseURL + result.profile_path}`;
+      
+      // checking if a profile image exist, if not it's ignored
+      if (result.profile_path) resultImg.src = `${posterBaseURL + result.profile_path}`;
       resultImg.classList.add('actor-poster');
       resultEl.classList.add('actor-result');
       resultEl.setAttribute('href', "#");
-      resultEl.setAttribute('data-id', result.id);
+      resultEl.setAttribute('data-actor-id', result.id);
 
       resultEl.appendChild(resultImg);
       resultContainer.appendChild(resultEl);
   });
 }
 
+function getActorInfo(actorId) {
+  const xhr = new XMLHttpRequest(),
+     actorNameEl = querySel('.actor-name'),
+      actorMetaEl = querySel('.actor-meta'),
+      actorBioEl = querySel('.actor-bio');
+
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      const actorInfo = JSON.parse(xhr.response);
+      
+      actorNameEl.textContent = `${actorInfo.name} - ${actorInfo.birthday} - ${actorInfo.place_of_birth}`;
+      actorBioEl.textContent = `${actorInfo.biography}`;
+
+      console.log(actorInfo);
+
+    } else {
+      console.log(`There was an error ${xhr.status}`);
+    }
+  }
+
+  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}?api_key=71c13c22fd835d4e19e38ff24d5ab4fc&language=en-US`);
+  xhr.send();
+}
 
 
 search.addEventListener('submit', function (e) {
   e.preventDefault();
+
+  // dom nodes
+
+   const actorPosterEl = querySel('.actor-poster'),
+          knownFor = querySel('.known-for'),
+          actorResults = document.querySelectorAll('.actor-result');
 
   let searchVal = searchEl.value,
       resultLabel = querySel('.results-info');
@@ -79,19 +105,30 @@ search.addEventListener('submit', function (e) {
     if (xhr.status === 200) {
       const TMDB_Results = JSON.parse(xhr.response),
             TMDB_Results_Cache = TMDB_Results;
-      
+
+      appWrap.style.display = 'block';
+      welcomeMsg.style.display = 'none';
 
       insertResults(TMDB_Results.results);
 
       console.log(actorResults);
 
+       const fullResultEl = document.querySelectorAll('.actor-result');
 
-      actorResults.forEach((result) => {
+      fullResultEl.forEach((result) => {
+        result.addEventListener('click', (e) => {
+          e.preventDefault();
+          getActorInfo(result.getAttribute('data-actor-id'));
+        })
+      })
+
+
+      /*actorResults.forEach((result) => {
         result.addEventListener('click', function(e) {
             e.preventDefault();
             console.log('clicked');
         })
-      });
+      }); */
 
 
 
