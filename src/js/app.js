@@ -115,6 +115,8 @@ function getActorCredits(actorId) {
         creditName = querySel('.credit-about'),
         creditCharactor = querySel('.credit-character'),
         creditOverview = querySel('.credit-overview'),
+        episodeCountEl = querySel('.episode-count'),
+        typeBadge = querySel('.type-badge'),
         creditInstructions = querySel('.credit-instructions');
 
   xhr.onload = function() {
@@ -151,8 +153,26 @@ function getActorCredits(actorId) {
           
           creditRes.cast.forEach((show) => {
               if (String(show.id) === showID) {
-                  creditName.textContent = `${show.title}`;
+                  if (show.title) {
+                    creditName.textContent = `${show.title}`;
+                  } else {
+                    creditName.textContent = `${show.name}`;
+                  }
+
                   creditCharactor.textContent = `${show.character}`;
+
+                  if (show.media_type == 'tv') {
+
+                    typeBadge.textContent = 'TV SHOW';
+
+                    if (show.episode_count) {
+                      episodeCountEl.textContent = `In ${show.episode_count} episodes.`;
+                    }
+
+                  } else {
+                      typeBadge.textContent = 'MOVIE';
+                      episodeCountEl.textContent = '';
+                  }
                   creditOverview.textContent = `${show.overview}`;
 
               }

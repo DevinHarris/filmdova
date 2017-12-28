@@ -1,3 +1,5 @@
+@import '../base/_base.scss';
+
 .app {
 	margin-top: 100px;
 
@@ -48,6 +50,31 @@
 
 		.about-credit {
 			margin-top: 50px;
+
+			.about-credit-wrap {
+				.credit-about {
+					display: inline-block;
+				}
+
+				.type-badge {
+					/*background-color: $highlight-color; */
+					border: 1px solid $highlight-color;
+					border-radius: 5px;
+					padding: 15px 10px;
+					margin-left: 20px;
+				}
+			}
+
+			.credit-role {
+				h3, h4 {
+					display: inline-block;
+				}
+
+				.episode-count {
+					margin-left: 20px;
+					color: $highlight-color;
+				}
+			}
 		}
 	}
 }
