@@ -32,6 +32,14 @@
 		}
 	}
 
+	.actor-results-wrap {
+		    display: flex;
+		    justify-content: space-between;
+		    margin-bottom: 50px;
+		    overflow-x: scroll;
+		    width: 90%;
+	}
+
 	.actor-poster {
 		height: 300px;
 		margin: 0 30px 30px 0;
@@ -46,6 +54,10 @@
 			    /* flex-flow: wrap; */
 			    overflow-y: scroll;
 			    align-items: baseline;
+
+			    .credit {
+			    	margin: 0 30px 30px 0;
+			    }
 		}
 
 		.about-credit {
