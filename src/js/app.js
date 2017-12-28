@@ -67,7 +67,11 @@ function insertResults(resultObj) {
       resultImg = document.createElement('img');
       
       // checking if a profile image exist, if not it's ignored
-      if (result.profile_path) resultImg.src = `${posterBaseURL + result.profile_path}`;
+      if (result.profile_path) {
+        resultImg.src = `${posterBaseURL + result.profile_path}`;
+      } else {
+        resultImg.src = `/public/img/no-avi.jpg`;
+      }
       resultImg.classList.add('actor-poster');
       resultEl.classList.add('actor-result');
       resultEl.setAttribute('href', "#");
@@ -154,7 +158,7 @@ function getActorCredits(actorId) {
           creditRes.cast.forEach((show) => {
               if (String(show.id) === showID) {
                   if (show.title) {
-                    creditName.textContent = `${show.title}`;
+                    creditName.textContent = `${show.title} (${show.release_date.substr(0,4)})`;
                   } else {
                     creditName.textContent = `${show.name}`;
                   }
