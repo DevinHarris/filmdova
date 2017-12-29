@@ -97,12 +97,11 @@ function getActorInfo(actorId) {
 
       //clearFromDOM(querySel('.actor-info'));
       
-      actorNameEl.textContent = `${actorInfo.name}, ${actorInfo.birthday}, ${actorInfo.place_of_birth}`;
+      actorNameEl.textContent = `${actorInfo.name} - ${moment().diff(actorInfo.birthday, 'years')} - (${moment(actorInfo.birthday).format('MMMM Do, YYYY')}) - ${actorInfo.place_of_birth}`;
       actorBioEl.textContent = `${actorInfo.biography}`;
 
 
       console.log(actorInfo);
-
     } else {
       console.log(`There was an error ${xhr.status}`);
     }
