@@ -32,12 +32,14 @@
 		}
 	}
 
-	.actor-results-wrap {
-		    display: flex;
-		    justify-content: space-between;
-		    margin-bottom: 50px;
-		    overflow-x: scroll;
-		    width: 90%;
+	.results-wrap {
+			.actors-result-wrap {
+			    display: flex;
+			    justify-content: space-between;
+			    margin-bottom: 50px;
+			    overflow-x: scroll;
+			    width: 90%;
+		}
 	}
 
 	.actor-poster {

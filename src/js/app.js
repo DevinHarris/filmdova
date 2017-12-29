@@ -70,7 +70,7 @@ function insertResults(resultObj) {
       if (result.profile_path) {
         resultImg.src = `${posterBaseURL + result.profile_path}`;
       } else {
-        resultImg.src = `/public/img/no-avi.jpg`;
+        resultImg.src = `./public/img/no-avi.jpg`;
       }
       resultImg.classList.add('actor-poster');
       resultEl.classList.add('actor-result');
