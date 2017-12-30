@@ -6,6 +6,8 @@
 // inject ID into result DOM via "data-id" attribute
 // compare cached ID with "data-id" on click
 // somehow use "params" to make it easier to navigate app
+
+
 // helper / wrapper 
 
 const querySel = (elName) => {
@@ -17,7 +19,8 @@ let btn = querySel('.btn'),
     searchEl = querySel('.search'),
     appWrap = querySel('.app-wrap'),
     welcomeMsg = querySel('.welcome-msg'),
-    posterBaseURL = 'https://image.tmdb.org/t/p/original/';
+    posterBaseURL = 'https://image.tmdb.org/t/p/original/',
+    api_key = 'api_key=71c13c22fd835d4e19e38ff24d5ab4fc';
 
 // send Person search request - function
 
@@ -26,7 +29,6 @@ let btn = querySel('.btn'),
 // then take to actor page
 
 function callToTMDB(url) {
-  const api_key = '71c13c22fd835d4e19e38ff24d5ab4fc';
 
   const xhr = new XMLHttpRequest();
 
@@ -107,7 +109,7 @@ function getActorInfo(actorId) {
     }
   }
 
-  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}?api_key=71c13c22fd835d4e19e38ff24d5ab4fc&language=en-US`);
+  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}?${api_key}&language=en-US`);
   xhr.send();
 }
 
@@ -168,6 +170,8 @@ function getActorCredits(actorId) {
 
                     typeBadge.textContent = 'TV SHOW';
 
+                    getEpisodeInfo(show.credit_id);
+
                     if (show.episode_count) {
                       episodeCountEl.textContent = `In ${show.episode_count} episodes.`;
                     }
@@ -194,11 +198,73 @@ function getActorCredits(actorId) {
     }
   }
 
-  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}/combined_credits?api_key=71c13c22fd835d4e19e38ff24d5ab4fc&language=en-US`)
+  xhr.open('GET', `https://api.themoviedb.org/3/person/${actorId}/combined_credits?${api_key}&language=en-US`)
 
   xhr.send();
 }
 
+function getEpisodeInfo(creditID) {
+  const xhr = new XMLHttpRequest(),
+        epImgWrap = querySel('.ep-img-wrap'),
+        epTitle = querySel('.ep-title'),
+        epOverView = querySel('.ep-overview'),
+        epSeasonEp = querySel('.ep-season');
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      const episodeInfo = JSON.parse(xhr.response);
+
+
+      clearFromDOM(epImgWrap);
+
+     episodeInfo.media.episodes.forEach((ep) => {
+        let epImgDocFrag = document.createDocumentFragment(),
+            epLink = document.createElement('a'),
+            epImg = document.createElement('img');
+      
+       epLink.classList.add('ep-img');
+       if (ep.still_path) {
+        epImg.src = `https://image.tmdb.org/t/p/w300/${ep.still_path}`;
+      } else {
+        epImg.src = `./public/img/no-show-img.jpg`;
+      }
+       epLink.setAttribute('ep-num', ep.episode_number);
+       epLink.setAttribute('href', '#');
+       epLink.appendChild(epImg);
+       epImgDocFrag.appendChild(epLink);
+       epImgWrap.appendChild(epImgDocFrag);
+    });
+
+    const epImgEl = document.querySelectorAll('.ep-img');
+
+    epImgEl.forEach((ep) => {
+        
+        ep.addEventListener('click', function(e) {
+          e.preventDefault();
+          let epNum = this.getAttribute('ep-num');
+          
+          episodeInfo.media.episodes.forEach((epObj) => {
+            if (Number(epNum) === epObj.episode_number) {
+              epTitle.textContent = `${epObj.name} - ${moment(epObj.air_date).format('MMMM Do, YYYY')}`;
+              epSeasonEp.textContent = `Season: ${epObj.season_number}, Episode: ${epObj.episode_number}`;
+              epOverView.textContent = ` ${epObj.overview}`;
+              console.log(epObj);
+            } 
+          })
+        })
+    }) 
+
+
+
+    console.log(episodeInfo);
+    } else {
+      console.log(`There was an error: ${xhr.status}`);
+    }
+  }
+
+  xhr.open('GET', `https://api.themoviedb.org/3/credit/${creditID}?api_key=71c13c22fd835d4e19e38ff24d5ab4fc`)
+  xhr.send();
+}
 
 search.addEventListener('submit', function (e) {
   e.preventDefault();

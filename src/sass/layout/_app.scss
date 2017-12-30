@@ -91,4 +91,19 @@
 			}
 		}
 	}
+
+	.ep-img-wrap {
+    	align-items: baseline;
+		box-sizing: border-box;
+		display: flex;
+    	flex-direction: row;
+    	justify-content: space-between;
+        padding-bottom: 10px;
+    	overflow-x: scroll;
+    	width: 90%;
+
+    	.ep-img {
+    		margin-right: 20px;
+    	}
+	}
 }
